@@ -1,6 +1,6 @@
 services:
   django:
-    container_name: armoreddjango_service
+    container_name: aiqfome_service
     build:
       context: ./service
       dockerfile: Dockerfile
@@ -15,10 +15,10 @@ services:
 
   db:
     env_file: '.env'
-    container_name: armoreddjango_db
+    container_name: aiqfome_db
     image: postgres:17
     environment:
-      POSTGRES_DB: armoreddjango_db
+      POSTGRES_DB: aiqfome_db
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports: 

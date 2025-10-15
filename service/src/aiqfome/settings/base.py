@@ -16,7 +16,7 @@ DEFAULT_APPS = [
 ]
 
 LOCAL_APPS = [
-    "armoreddjango",
+    "aiqfome",
     "authentication",
     "utils",
 ]
@@ -40,7 +40,7 @@ MIDDLEWARE = [
     "simple_history.middleware.HistoryRequestMiddleware",
 ]
 
-ROOT_URLCONF = "armoreddjango.urls"
+ROOT_URLCONF = "aiqfome.urls"
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
@@ -53,23 +53,19 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1440), # 1 Day
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=7), # 7 Days
-    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1), # 1 Day
-    "SLIDING_TOKEN_LIFETIME": timedelta(days=7), # 7 Days
-    "SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER": timedelta(days=1), # 1 Day
-    "SLIDING_TOKEN_LIFETIME_LATE_USER": timedelta(days=7), # 7 Days
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1440),  # 1 Day
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # 7 Days
+    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),  # 1 Day
+    "SLIDING_TOKEN_LIFETIME": timedelta(days=7),  # 7 Days
+    "SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER": timedelta(days=1),  # 1 Day
+    "SLIDING_TOKEN_LIFETIME_LATE_USER": timedelta(days=7),  # 7 Days
 }
 
 SWAGGER_SETTINGS = {
-    'SECURITY_DEFINITIONS': {
-        'Bearer': {
-            'type': 'apiKey',
-            'name': 'Authorization',
-            'in': 'header'
-        }
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"}
     },
-    'SECURITY_REQUIREMENTS': [{'Bearer': []}],
+    "SECURITY_REQUIREMENTS": [{"Bearer": []}],
 }
 
 TEMPLATES = [
@@ -87,7 +83,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "armoreddjango.wsgi.application"
+WSGI_APPLICATION = "aiqfome.wsgi.application"
 
 AUTH_USER_MODEL = "authentication.profile"
 
@@ -116,13 +112,13 @@ USE_I18N = True
 
 USE_TZ = True
 
-MEDIA_URL = 'media/'
+MEDIA_URL = "media/"
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-STATIC_URL = 'static/'
+STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 cd src
-python manage.py test --settings=armoreddjango.settings
-pytest --ds=armoreddjango.settings --durations=0 -p no:warnings
+python manage.py test --settings=aiqfome.settings
+pytest --durations=0 -p no:warnings

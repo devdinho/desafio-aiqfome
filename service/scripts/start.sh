@@ -5,7 +5,7 @@ echo no | python src/manage.py collectstatic --noinput > /dev/null 2>&1
 echo "✅ Coletando arquivos estáticos com sucesso!"
 
 echo "🟡 Migrando o banco de dados..."
-python src/manage.py makemigrations utils authentication armoreddjango
+python src/manage.py makemigrations utils authentication aiqfome
 echo "✅ Migrando o banco de dados com sucesso!"
 python src/manage.py migrate --noinput
 
@@ -19,7 +19,7 @@ cd /app/src
 
 if [ "$PRODUCTION" = "True" ]; then
     echo "🟡 Iniciando em modo PRODUÇÃO..."
-    gunicorn --config gunicorn_config.py armoreddjango.wsgi:application
+    gunicorn --config gunicorn_config.py aiqfome.wsgi:application
 else
     echo "🟡 Iniciando em modo DESENVOLVIMENTO..."
     python manage.py runserver 0.0.0.0:8003

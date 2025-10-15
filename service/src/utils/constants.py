@@ -17,6 +17,7 @@ class ProfileType(object):
         (EARUSER, "Usuário Padrão"),
     )
 
+
 class Status(object):
     """Object representando diferentes status de objetos.
 

@@ -28,7 +28,7 @@ class Profile(AbstractUser):
     """
 
     history = HistoricalRecords()
-    
+
     email = models.EmailField("E-mail", unique=True, blank=False, null=False)
 
     profileType = models.IntegerField(

@@ -2,7 +2,7 @@ import os
 
 from dotenv import load_dotenv
 
-from armoreddjango.settings.base import *
+from aiqfome.settings.base import *
 
 SITE_ID = 1
 
@@ -11,10 +11,10 @@ load_dotenv(override=True)
 DEBUG = os.getenv("DEBUG").lower() == "true"
 PRODUCTION = os.getenv("PRODUCTION", "False").lower() == "true"
 
-POSTGRES_DB = "armoreddjango_db"
+POSTGRES_DB = "aiqfome_db"
 POSTGRES_USER = os.getenv("POSTGRES_USER")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-DB_HOST = "armoreddjango_db"
+DB_HOST = "aiqfome_db"
 DB_PORT = os.getenv("DB_PORT", 5432)
 
 SECRET_KEY = os.getenv("SECRET_KEY")
@@ -26,9 +26,9 @@ ALLOWED_HOSTS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:8003", 
-    "http://0.0.0.0:8003", 
-    f"https://{os.getenv('SYSTEM_URL', 'insert-your-domain-here.com')}"
+    "http://localhost:8003",
+    "http://0.0.0.0:8003",
+    f"https://{os.getenv('SYSTEM_URL', 'insert-your-domain-here.com')}",
 ]
 
 CORS_ALLOWED_ORIGINS = CSRF_TRUSTED_ORIGINS
@@ -43,3 +43,5 @@ DATABASES = {
         "PORT": DB_PORT,
     }
 }
+
+STORE_API_URL = "https://fakestoreapi.com/products"
