@@ -1,0 +1,30 @@
+services:
+  django:
+    container_name: armoreddjango_service
+    build:
+      context: ./service
+      dockerfile: Dockerfile
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./service:/app
+    depends_on:
+      - db
+    env_file: '.env'
+    restart: always
+
+  db:
+    env_file: '.env'
+    container_name: armoreddjango_db
+    image: postgres:17
+    environment:
+      POSTGRES_DB: armoreddjango_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports: 
+      - "${DB_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data:
