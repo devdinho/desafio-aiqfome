@@ -7,4 +7,3 @@ exclude =
     migrations 
     settings 
     __pycache__
-    Endpoints.py

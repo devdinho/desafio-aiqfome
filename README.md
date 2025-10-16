@@ -22,8 +22,8 @@ testes.
 
 O projeto inclui:
 
-- App `authentication` com um modelo de usuário customizado `Profile`.
-- Endpoints REST (DRF) para manipulação do perfil (`ProfileRestView`).
+- App `authentication` com um modelo de usuário customizado `Customer`.
+- Endpoints REST (DRF) para manipulação do perfil (`CustomerRestView`).
 - Scripts para iniciar a aplicação, coletar estáticos e executar migrations.
 - Configuração para executar via Docker (imagem baseada em Python + Poetry).
 
@@ -32,6 +32,7 @@ O projeto inclui:
 - Python >= 3.10
 - Docker & Docker Compose (opcional, recomendado para desenvolvimento e CI)
 - PostgreSQL (quando não usar Docker)
+- Flake8, Black & Isort
 
 As dependências Python estão gerenciadas via Poetry no arquivo
 `service/pyproject.toml`.
@@ -103,7 +104,10 @@ Observações sobre o container:
 ## Testes e Lint
 
 O repositório já inclui scripts para facilitar testes e lint:
-
+- Caso precise instalar as ferramentas:
+```bash
+sudo apt install black isort flake8 -y
+```
 - Testes unitários (executar dentro do container ou localmente):
 
 ```bash
@@ -118,6 +122,12 @@ O repositório já inclui scripts para facilitar testes e lint:
 ./scripts/start-lint.sh <caminho-ou-pacote>
 ```
 
+- Exemplo:
+
+```bash
+./service/scripts/start-lint.sh service/src
+```
+
 ## Estrutura principal do projeto
 
  (visão resumida)
@@ -130,9 +140,9 @@ O repositório já inclui scripts para facilitar testes e lint:
 
 Exemplo de arquivos relevantes:
 
-- `service/src/authentication/models/Profile.py` — modelo `Profile` que
-    estende `AbstractUser` adicionando `email` único e `profileType`.
-- `service/src/authentication/api/ProfileRestView.py` — `ModelViewSet` que
+- `service/src/authentication/models/Customer.py` — modelo `Customer` que
+    estende `AbstractUser` adicionando `email` único e `CustomerType`.
+- `service/src/authentication/api/CustomerRestView.py` — `ModelViewSet` que
     expõe operações de list/update (create e delete são proibidos).
 
 ## Como contribuir

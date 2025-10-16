@@ -1,11 +1,10 @@
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 from simple_history.models import HistoricalRecords
+from utils.constants import CustomerType
 
-from utils.constants import ProfileType
 
-
-class Profile(AbstractUser):
+class Customer(AbstractUser):
     """Modelo de perfil de usuário personalizado.
 
     O perfil de usuário é baseado no modelo de usuário padrão do Django, mas com
@@ -21,8 +20,8 @@ class Profile(AbstractUser):
         - date_joined (datetime): Data e hora em que este usuário foi adicionado.
 
     Atributos adicionais:
-        - profileType (str): Tipo de perfil baseado em contants do arquivo
-        [contants.ProfileType](../../utils/constants.md#service.src.utils.constants.ProfileType).
+        - CustomerType (str): Tipo de perfil baseado em contants do arquivo
+        [contants.CustomerType](../../utils/constants.md#service.src.utils.constants.CustomerType).
         - groups (Group): Grupos de permissões aos quais este usuário pertence.
         - user_permissions (Permission): Permissões específicas para este usuário
     """
@@ -31,10 +30,10 @@ class Profile(AbstractUser):
 
     email = models.EmailField("E-mail", unique=True, blank=False, null=False)
 
-    profileType = models.IntegerField(
+    CustomerType = models.IntegerField(
         "Tipo de Perfil",
-        choices=ProfileType.PROFILE_TYPE_CHOICES,
-        default=ProfileType.EARUSER,
+        choices=CustomerType.CUSTOMER_TYPE_CHOICES,
+        default=CustomerType.EARUSER,
     )
 
     groups = models.ManyToManyField(
@@ -58,5 +57,5 @@ class Profile(AbstractUser):
         return f"{self.get_full_name()} ({self.username})"
 
     class Meta:
-        verbose_name = "Profile"
-        verbose_name_plural = "Profiles"
+        verbose_name = "Customer"
+        verbose_name_plural = "Customers"

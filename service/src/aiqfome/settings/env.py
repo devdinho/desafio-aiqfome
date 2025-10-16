@@ -1,8 +1,7 @@
 import os
 
-from dotenv import load_dotenv
-
 from aiqfome.settings.base import *
+from dotenv import load_dotenv
 
 SITE_ID = 1
 
@@ -44,4 +43,4 @@ DATABASES = {
     }
 }
 
-STORE_API_URL = "https://fakestoreapi.com/products"
+FAKESTORE_BASE_URL = "https://fakestoreapi.com/products"

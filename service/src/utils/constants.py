@@ -1,4 +1,4 @@
-class ProfileType(object):
+class CustomerType(object):
     """Object representando diferentes tipos de Perfis de Usuários.
 
     Atributos:
@@ -11,7 +11,7 @@ class ProfileType(object):
     DEVELOPER = 2
     EARUSER = 3
 
-    PROFILE_TYPE_CHOICES = (
+    CUSTOMER_TYPE_CHOICES = (
         (ADMIN, "Administrador"),
         (DEVELOPER, "Desenvolvedor"),
         (EARUSER, "Usuário Padrão"),

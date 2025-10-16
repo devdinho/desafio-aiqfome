@@ -9,10 +9,10 @@ python src/manage.py makemigrations utils authentication aiqfome
 echo "✅ Migrando o banco de dados com sucesso!"
 python src/manage.py migrate --noinput
 
-python src/manage.py shell -c "from authentication.models import Profile; \
-                           Profile.objects.filter(username='admin').exists() or \
-                           Profile.objects.create_superuser(username='admin',
-                           email='admin@example.com', password='$ADMIN_PASSWORD', profileType=1,
+python src/manage.py shell -c "from authentication.models import Customer; \
+                           Customer.objects.filter(username='admin').exists() or \
+                           Customer.objects.create_superuser(username='admin',
+                           email='admin@example.com', password='$ADMIN_PASSWORD', CustomerType=1,
                            first_name='Admin', last_name='User')"
 
 cd /app/src

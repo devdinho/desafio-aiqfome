@@ -1,9 +1,8 @@
+from authentication.models import Customer
 from django.contrib import admin
 
-from authentication.models import Profile
 
-
-class ProfileAdmin(admin.ModelAdmin):
+class CustomerAdmin(admin.ModelAdmin):
     """Admin do modelo de perfil de usuário personalizado.
 
     Este admin é baseado no modelo de usuário padrão do Django, mas com
@@ -19,8 +18,8 @@ class ProfileAdmin(admin.ModelAdmin):
       - date_joined (datetime): Data e hora em que este usuário foi adicionado.
 
     Atributos adicionais:
-      - profileType (str): Tipo de perfil baseado em contants do arquivo
-      [contants.ProfileType](../../utils/constants.md#service.src.utils.constants.ProfileType).
+      - CustomerType (str): Tipo de perfil baseado em contants do arquivo
+      [contants.CustomerType](../../utils/constants.md#service.src.utils.constants.CustomerType).
       - groups (Group): Grupos de permissões aos quais este usuário pertence.
       - user_permissions (Permission): Permissões específicas para este usuário
 
@@ -36,7 +35,7 @@ class ProfileAdmin(admin.ModelAdmin):
 
     list_display = (
         "username",
-        "profileType",
+        "CustomerType",
         "first_name",
         "last_name",
         "email",
@@ -44,8 +43,8 @@ class ProfileAdmin(admin.ModelAdmin):
         "is_active",
     )
     search_fields = ("username", "first_name", "last_name", "email")
-    list_filter = ("profileType", "is_staff", "is_active")
-    ordering = ("username", "-profileType")
+    list_filter = ("CustomerType", "is_staff", "is_active")
+    ordering = ("username", "-CustomerType")
     filter_horizontal = ("groups", "user_permissions")
     fieldsets = (
         (None, {"fields": ("username", "password")}),
@@ -58,4 +57,4 @@ class ProfileAdmin(admin.ModelAdmin):
     icon_name = "person"
 
 
-admin.site.register(Profile, ProfileAdmin)
+admin.site.register(Customer, CustomerAdmin)

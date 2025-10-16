@@ -1,3 +1,3 @@
-from authentication.api.CreateProfileRestView import \
-    CreateProfileRestView  # noqa: F401
-from authentication.api.ProfileRestView import ProfileRestView  # noqa: F401
+from authentication.api.CreateCustomerRestView import \
+    CreateCustomerRestView  # noqa: F401
+from authentication.api.CustomerRestView import CustomerRestView  # noqa: F401

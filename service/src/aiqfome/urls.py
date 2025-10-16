@@ -1,3 +1,5 @@
+from aiqfome.api import FavoritesRestView
+from authentication.api import CreateCustomerRestView, CustomerRestView
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -8,8 +10,7 @@ from rest_framework import permissions
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView, TokenVerifyView)
-
-from authentication.api import CreateProfileRestView, ProfileRestView
+from utils.FakeStoreProxyViewSet import FakeStoreProxyViewSet
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -49,9 +50,11 @@ if not settings.PRODUCTION:
 
 router = DefaultRouter(trailing_slash=False)
 router.register(
-    "api/register/", CreateProfileRestView, basename="CreateProfileRestView"
+    "api/register/", CreateCustomerRestView, basename="CreateCustomerRestView"
 )
-router.register("api/profile", ProfileRestView, basename="ProfileRestView")
+router.register("api/customer", CustomerRestView, basename="CustomerRestView")
+router.register("api/favorites", FavoritesRestView, basename="FavoritesRestView")
+router.register("api/products", FakeStoreProxyViewSet, basename="FakeStoreProxyViewSet")
 
 urlpatterns += router.urls
 

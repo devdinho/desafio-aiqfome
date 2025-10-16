@@ -26,5 +26,26 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
 
+  lint:
+    container_name: aiqfome_lint
+    build:
+      context: ./service
+      dockerfile: Dockerfile
+    command: /bin/sh -c "service/scripts/start-lint.sh service/src"
+    volumes:
+      - .:/app
+    env_file: '.env'
+    restart: on-failure
+    
+  test:
+    container_name: aiqfome_test
+    build:
+      context: ./service
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    env_file: '.env'
+    command: /bin/sh -c "service/scripts/run_unit_tests.sh"
+    
 volumes:
   postgres_data:

@@ -85,7 +85,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "aiqfome.wsgi.application"
 
-AUTH_USER_MODEL = "authentication.profile"
+AUTH_USER_MODEL = "authentication.customer"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -123,3 +123,12 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 LOGIN_URL = "/admin/login/"
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-fakestore-cache",
+    }
+}
+
+CACHE_TIMEOUT = 60 * 5

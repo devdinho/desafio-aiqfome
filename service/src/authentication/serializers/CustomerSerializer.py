@@ -1,9 +1,8 @@
+from authentication.models import Customer
 from rest_framework import serializers
 
-from authentication.models import Profile
 
-
-class ProfileSerializer(serializers.ModelSerializer):
+class CustomerSerializer(serializers.ModelSerializer):
     """Serializer para o modelo de usuário.
 
     ### Utilizado para converter objetos de usuário em JSON e vice-versa.
@@ -20,7 +19,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     """
 
     class Meta:
-        model = Profile
+        model = Customer
         fields = (
             "id",
             "first_name",
@@ -32,6 +31,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             "date_joined",
         )
         extra_kwargs = {"password": {"write_only": True}}
+        read_only_fields = ("last_login", "date_joined")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -42,17 +42,17 @@ class ProfileSerializer(serializers.ModelSerializer):
             self.fields["password"].required = False
 
     def create(self, validated_data):
-        newProfile = Profile(
+        newCustomer = Customer(
             username=validated_data["username"],
             first_name=validated_data["first_name"],
             last_name=validated_data["last_name"],
             email=validated_data["email"],
         )
 
-        newProfile.set_password(validated_data["password"])
-        newProfile.save()
+        newCustomer.set_password(validated_data["password"])
+        newCustomer.save()
 
-        return newProfile
+        return newCustomer
 
     def update(self, instance, validated_data):
         instance.first_name = validated_data.get("first_name", instance.first_name)
