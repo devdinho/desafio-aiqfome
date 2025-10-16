@@ -1,170 +1,231 @@
 
-# aiqfome
+# Aiqfome — Serviço backend
 
-Uma base (template) de aplicação web construída com Django, focada em oferecer
-um ponto de partida com autenticação, gerenciamento de perfis e integração
-pronta para execução via Docker. Este repositório contém o código do service
-(backend) em `service/src` e scripts para facilitar desenvolvimento, lint e
-testes.
+Backend Django para o desafio Aiqfome. Implementa autenticação, gerenciamento
+de profiles e favoritos de produtos integrados a uma API externa (FakeStore).
+Este README descreve como rodar, variáveis de ambiente importantes e os
+endpoints principais.
 
-## Sumário
-
-- Visão geral
+Sumário
+- Sobre
 - Requisitos
-- Instalação (local)
-- Execução com Docker
-- Testes e lint
-- Estrutura do projeto
+- Como rodar (Docker)
+- Variáveis de ambiente importantes
+- Endpoints principais
+- Cache de favoritos
+- Migrations e testes
 - Como contribuir
-- Licença
 
-## Visão geral
+Sobre
+-------
+O serviço fornece:
 
-O projeto inclui:
+- Autenticação JWT (login/refresh/verify).
+- Registro e gerenciamento de profiles (perfil de usuário customizado).
+- Endpoints para gerenciar produtos favoritos por usuário.
+- Integração com uma FakeStore API (proxy interno e validação de produtos).
 
-- App `authentication` com um modelo de usuário customizado `Customer`.
-- Endpoints REST (DRF) para manipulação do perfil (`CustomerRestView`).
-- Scripts para iniciar a aplicação, coletar estáticos e executar migrations.
-- Configuração para executar via Docker (imagem baseada em Python + Poetry).
+Requisitos
+----------
+- Docker & Docker Compose (recomendado)
+- Python 3.10+ (para execução local sem Docker)
 
-## Requisitos
-
-- Python >= 3.10
-- Docker & Docker Compose (opcional, recomendado para desenvolvimento e CI)
-- PostgreSQL (quando não usar Docker)
-- Flake8, Black & Isort
-
-As dependências Python estão gerenciadas via Poetry no arquivo
-`service/pyproject.toml`.
-
-## Instalação (modo local, sem Docker)
-
-1. Crie e ative um ambiente virtual com Python >=3.10:
+Como rodar (com Docker)
+-----------------------
+Na raiz do projeto:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-```
-
-2. Instale as dependências (preferido: usar Poetry):
-
-```bash
-cd service
-poetry install
-```
-
-3. Copie e configure variáveis de ambiente (arquivo `.env`). Exemplos:
-
-- POSTGRES_USER
-- POSTGRES_PASSWORD
-- DB_PORT
-- ADMIN_PASSWORD
-- PRODUCTION (setar True/False no container)
-
-4. Execute migrations e crie um superusuário (o script `start.sh` já tenta
-criar um usuário `admin` usando `ADMIN_PASSWORD`):
-
-```bash
-cd service
-python src/manage.py migrate
-python src/manage.py createsuperuser
-```
-
-5. Rode o servidor de desenvolvimento:
-
-```bash
-python src/manage.py runserver 0.0.0.0:8003
-```
-
-Abra http://localhost:8003/ no navegador.
-
-## Execução com Docker (recomendado)
-
-O projeto fornece um `Dockerfile` e `docker-compose.yaml` na raiz que
-constroem um container do serviço e um container com PostgreSQL. O container do
-service monta `./service` em `/app` e usa `/app/scripts/start.sh` como entrypoint.
-
-Para rodar com Docker Compose:
-
-```bash
-# (na raiz do projeto)
 docker compose up --build
 ```
 
-Com isso o serviço Django ficará disponível em `http://localhost:8003/`.
+O serviço Django ficará disponível em http://localhost:8003/.
 
-Observações sobre o container:
+Variáveis de ambiente importantes
+---------------------------------
+Defina um arquivo `.env` na raiz (existe um exemplo no repositório). As
+variáveis mais importantes:
 
-- O `Dockerfile` instala o Poetry e as ferramentas de lint (black/isort/flake8).
-- O `start.sh` coleta estáticos, gera migrations, aplica `migrate` e cria um
-    superusuário `admin` (utiliza a variável `ADMIN_PASSWORD`).
-- Para modo produção, defina `PRODUCTION=True` no `.env` e o container usará
-    Gunicorn conforme `gunicorn_config.py`.
+- SECRET_KEY — segredo do Django (se conter `$`, coloque entre aspas simples).
+- POSTGRES_USER / POSTGRES_PASSWORD / DB_PORT — credenciais do Postgres.
+- ADMIN_PASSWORD — senha usada pelo script para criar usuário `admin`.
+- PRODUCTION — True/False. Quando True, o container inicia em modo produção
+    (gunicorn).
+- FAKESTORE_BASE_URL / STORE_API_URL — URLs usadas para consultar os
+    produtos externos.
 
-## Testes e Lint
+Endpoints principais
+--------------------
+- POST /api/login/ — obter pair JWT
+- POST /api/login/refresh/ — refresh token
+- POST /api/login/verify/ — verificar token
+- POST /api/register/ — (endpoint de registro, ver `CreateCustomerRestView`)
+- GET /api/customer — obter perfil do usuário autenticado
+- GET /api/customer/{id} — obter perfil por id
 
-O repositório já inclui scripts para facilitar testes e lint:
-- Caso precise instalar as ferramentas:
+- Favorites endpoints (registrados em `/api/favorites` via router):
+    - GET /api/favorites — listar favoritos ativos do usuário autenticado
+    - POST /api/favorites — criar um favorito (body: {"product_data": {...}})
+    - GET /api/favorites/{id} — obter favorito por id
+    - PATCH /api/favorites/{id} — atualizar favorito
+    - DELETE /api/favorites/{id} — desativar favorito (soft delete)
+
+Observação: endpoints de profile exigem autenticação JWT (Authorization: Bearer <token>).
+
+Cache de favoritos
+-------------------
+O serviço usa cache para armazenar a lista de favoritos por usuário com a
+chave `fakestore:all_products:{user_id}`:
+
+- A função util `utils.cache_utils.update_favorites_cache_for_user(user_id)`
+    centraliza a atualização do cache.
+- Ao criar ou desativar favoritos, o cache é atualizado automaticamente.
+
+Migrações e testes
+------------------
+- Gerar e aplicar migrações (quando rodando local ou no container):
+
 ```bash
-sudo apt install black isort flake8 -y
+cd service
+python src/manage.py makemigrations
+python src/manage.py migrate
 ```
-- Testes unitários (executar dentro do container ou localmente):
+
+- Executar testes unitários (rodar dentro do container ou localmente com o ambiente configurado):
 
 ```bash
-# dentro do container ou no diretório service com ambiente configurado
-./scripts/run_unit_tests.sh
+./service/scripts/run_unit_tests.sh
 ```
 
-- Lint e formatação (local ou container):
+Comandos úteis
+-------------
+- Subir com Docker Compose: `docker compose up --build`
+- Rodar localmente (dev): `python service/src/manage.py runserver 0.0.0.0:8003`
+- Executar testes: `./service/scripts/run_unit_tests.sh`
+- Executar lint: `./service/scripts/start-lint.sh <alvo>`
 
-```bash
-# Executa black, isort e flake8 nos arquivos/pastas informados
-./scripts/start-lint.sh <caminho-ou-pacote>
+
+Exemplos de payloads e respostas
+--------------------------------
+O projeto expõe documentação interativa com Swagger/Redoc quando `PRODUCTION` é
+False. Acesse:
+
+- `http://localhost:8003/swagger/` (Swagger UI)
+- `http://localhost:8003/redoc/` (Redoc)
+
+Exemplos rápidos (JSON):
+
+1) Autenticação — obter JWT
+
+Request:
+
+POST /api/login/
+
+```json
+{
+    "username": "admin",
+    "password": "admin"
+}
 ```
 
-- Exemplo:
+Response (200):
 
-```bash
-./service/scripts/start-lint.sh service/src
+```json
+{
+    "access": "<jwt-access-token>",
+    "refresh": "<jwt-refresh-token>"
+}
 ```
 
-## Estrutura principal do projeto
+2) Registrar usuário
 
- (visão resumida)
+Request:
 
-- service/: Dockerfile, scripts e código Python (src/)
-    - src/aiqfome/: configurações do Django
-    - src/authentication/: app com models, serializers e views
-    - scripts/: scripts para start, lint e testes
-- docker-compose.yaml: define os serviços `django` e `db` (Postgres)
+POST /api/register/
 
-Exemplo de arquivos relevantes:
+```json
+{
+    "username": "jdoe",
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "jdoe@example.com",
+    "password": "strongpass"
+}
+```
 
-- `service/src/authentication/models/Customer.py` — modelo `Customer` que
-    estende `AbstractUser` adicionando `email` único e `CustomerType`.
-- `service/src/authentication/api/CustomerRestView.py` — `ModelViewSet` que
-    expõe operações de list/update (create e delete são proibidos).
+Response (201):
 
-## Como contribuir
+```json
+{
+    "id": 5,
+    "first_name": "John",
+    "last_name": "Doe",
+    "username": "jdoe",
+    "email": "jdoe@example.com",
+    "last_login": null,
+    "date_joined": "2025-10-16T12:00:00Z"
+}
+```
 
-Pequenas contribuições são bem-vindas. Fluxo sugerido:
+3) Criar favorito
 
-1. Fork do repositório
-2. Crie uma branch com a feature/bugfix: `git checkout -b feat/minha-mudanca`
-3. Abra um pull request descrevendo a alteração
+O serializer espera `product_id` no payload; o serviço busca os dados do
+produto na FakeStore (proxy interno) e grava `product_data` automaticamente.
 
-Dicas:
+Request:
 
-- Rode os testes localmente antes de abrir PR
-- Siga as regras do linter (black/isort/flake8)
+POST /api/favorites
+Authorization: Bearer <access>
 
-## Comandos úteis rápidos
+```json
+{
+    "product_id": 3
+}
+```
 
-- Subir com Docker Compose: `docker-compose up --build`
-- Rodar apenas o serviço (em dev): `python service/src/manage.py runserver`
-- Executar testes: `service/scripts/run_unit_tests.sh`
-- Executar lint: `service/scripts/start-lint.sh <alvo>`
+Response (201):
 
-## Licença
+```json
+{
+    "id": "<uuid>",
+    "customer": "<customer_id>",
+    "product_id": 3,
+    "product_data": {
+        "title": "Mens Cotton Jacket",
+        "price": 55.99,
+        "description": "great outerwear jackets for Spring/Autumn/Winter, suitable for many occasions, such as working, hiking, camping, mountain/rock climbing, cycling, traveling or other outdoors. Good gift choice for you or your family member. A warm hearted love to Father, husband or son in this thanksgiving or Christmas Day.",
+        "category": "men's clothing",
+        "image": "https://fakestoreapi.com/img/71li-ujtlUL._AC_UX679_t.png",
+        "rating": { "rate": 4.7, "count": 500 }
+    },
+    "active": true,
+    "created_at": "2025-10-16T12:05:00Z",
+    "updated_at": "2025-10-16T12:05:00Z"
+}
+```
 
-Este projeto está sob a licença MIT — veja `LICENSE` para detalhes.
+4) Listar favoritos
+
+Request:
+
+GET /api/favorites
+Authorization: Bearer <access>
+
+Response (200):
+
+```json
+[
+    {
+        "id": "<uuid>",
+        "customer": "<customer_id>",
+        "product_id": 3,
+        "product_data": { ... },
+        "active": true,
+        "created_at": "2025-10-16T12:05:00Z",
+        "updated_at": "2025-10-16T12:05:00Z"
+    }
+]
+```
+
+Observação: para ver todas as operações e schemas detalhados, prefira a UI
+disponível em `/swagger/` (muito útil para testar rapidamente payloads e ver
+os campos esperados).
