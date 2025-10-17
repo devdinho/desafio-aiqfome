@@ -1,16 +1,15 @@
 from django.core.cache import cache
-from utils.cache_utils import update_favorites_cache_for_user
 from django.shortcuts import get_object_or_404
-
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status, viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from drf_yasg.utils import swagger_auto_schema
-
 from aiqfome.models import Favorites
 from aiqfome.serializers import FavoritesSerializer
+from utils.cache_utils import update_favorites_cache_for_user
+
 
 class FavoritesRestView(viewsets.ModelViewSet):
     """Endpoint para gerenciar favoritos de produtos.
@@ -54,12 +53,12 @@ class FavoritesRestView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = FavoritesSerializer
     queryset = Favorites.objects.none()
- 
+
     def get_object(self):
         pk = self.kwargs.get("pk")
         obj = get_object_or_404(Favorites, pk=pk)
         return obj
-    
+
     def perform_create(self, serializer):
         serializer.save(customer=self.request.user)
 
@@ -78,7 +77,7 @@ class FavoritesRestView(viewsets.ModelViewSet):
         data = cache.get(cache_key)
         if not data:
             data = update_favorites_cache_for_user(request.user.id)
-            
+
         return Response(data)
 
     @swagger_auto_schema(
@@ -87,10 +86,10 @@ class FavoritesRestView(viewsets.ModelViewSet):
         operation_description="Add a new product to the authenticated user's favorites.",
     )
     def create(self, request, *args, **kwargs):
-        data = super().create(request, *args, **kwargs)
+        response = super().create(request, *args, **kwargs)
         update_favorites_cache_for_user(request.user.id)
 
-        return Response(data)
+        return response
 
     @swagger_auto_schema(
         tags=["Favorites"],
@@ -99,6 +98,16 @@ class FavoritesRestView(viewsets.ModelViewSet):
     )
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
+        if instance.customer != request.user and not request.user.is_superuser:
+            raise PermissionDenied(
+                {"detail": "You do not have permission to perform this action."}
+            )
+        if instance.active is False:
+            return Response(
+                {"detail": "This favorite has been deactivated."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
@@ -124,7 +133,10 @@ class FavoritesRestView(viewsets.ModelViewSet):
 
         instance.active = False
         instance.save()
-        
+
         update_favorites_cache_for_user(request.user.id)
-            
-        return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(
+            {"detail": "Favorite deactivated successfully."},
+            status=status.HTTP_204_NO_CONTENT,
+        )

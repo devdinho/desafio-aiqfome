@@ -1,2 +1,1 @@
-from aiqfome.serializers.FavoritesSerializer import \
-    FavoritesSerializer  # noqa: F401
+from aiqfome.serializers.FavoritesSerializer import FavoritesSerializer  # noqa: F401

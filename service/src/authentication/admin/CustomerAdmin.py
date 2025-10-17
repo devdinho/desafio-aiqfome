@@ -1,5 +1,6 @@
-from authentication.models import Customer
 from django.contrib import admin
+
+from authentication.models import Customer
 
 
 class CustomerAdmin(admin.ModelAdmin):

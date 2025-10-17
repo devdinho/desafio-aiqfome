@@ -1,8 +1,9 @@
 import uuid
 
-from authentication.models import Customer
 from django.db import models
 from simple_history.models import HistoricalRecords
+
+from authentication.models import Customer
 
 
 class Favorites(models.Model):

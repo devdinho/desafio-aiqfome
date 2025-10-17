@@ -1,6 +1,7 @@
-from authentication.models import Groups
 from django.contrib import admin
 from django.contrib.auth.models import Group
+
+from authentication.models import Groups
 
 
 class GroupsAdmin(admin.ModelAdmin):

@@ -1,7 +1,8 @@
 import os
 
-from aiqfome.settings.base import *
 from dotenv import load_dotenv
+
+from aiqfome.settings.base import *
 
 SITE_ID = 1
 

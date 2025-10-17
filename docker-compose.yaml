@@ -45,7 +45,7 @@ services:
     depends_on:
       - db
     env_file: '.env'
-    command: /bin/sh -c "service/scripts/run_unit_tests.sh"
+    command: /bin/sh -c "scripts/run_unit_tests.sh"
     
 volumes:
   postgres_data:

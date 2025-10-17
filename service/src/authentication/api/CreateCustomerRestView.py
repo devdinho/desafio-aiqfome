@@ -1,8 +1,9 @@
-from authentication.models import Customer
-from authentication.serializers import CustomerSerializer
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
+
+from authentication.models import Customer
+from authentication.serializers import CustomerSerializer
 
 
 class CreateCustomerRestView(viewsets.ModelViewSet):

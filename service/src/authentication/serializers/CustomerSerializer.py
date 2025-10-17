@@ -1,5 +1,6 @@
-from authentication.models import Customer
 from rest_framework import serializers
+
+from authentication.models import Customer
 
 
 class CustomerSerializer(serializers.ModelSerializer):

@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 from simple_history.models import HistoricalRecords
+
 from utils.constants import CustomerType
 
 

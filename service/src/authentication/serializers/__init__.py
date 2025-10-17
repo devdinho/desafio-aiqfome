@@ -1,2 +1,3 @@
-from authentication.serializers.CustomerSerializer import \
-    CustomerSerializer  # noqa: F401
+from authentication.serializers.CustomerSerializer import (  # noqa: F401
+    CustomerSerializer,
+)

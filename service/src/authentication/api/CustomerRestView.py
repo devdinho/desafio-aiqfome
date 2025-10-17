@@ -1,16 +1,15 @@
 from django.shortcuts import get_object_or_404
-
 from drf_yasg.utils import swagger_auto_schema
-
 from rest_framework import status, viewsets
-from rest_framework.exceptions import (MethodNotAllowed, NotFound,
-                                       PermissionDenied)
+from rest_framework.exceptions import MethodNotAllowed, NotFound, PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from authentication.models import Customer
 from authentication.serializers import CustomerSerializer
+from utils.cache_utils import update_favorites_cache_for_user
+
 
 class CustomerRestView(viewsets.ModelViewSet):
     """Endpoint para registrar, editar, visualizar e apagar um usuário.
@@ -91,9 +90,10 @@ class CustomerRestView(viewsets.ModelViewSet):
         if instance.id != request.user.id and not request.user.is_superuser:
             raise PermissionDenied(detail="You can only delete your own profile!")
 
-        instance.is_active = False
-        instance.save()
-        
+        update_favorites_cache_for_user(request.user.id, invalidate=True)
+
+        instance.delete()
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @swagger_auto_schema(
