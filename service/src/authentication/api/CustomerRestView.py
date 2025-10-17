@@ -69,7 +69,7 @@ class CustomerRestView(viewsets.ModelViewSet):
         Users can only update their own profile unless they are superusers.""",
     )
     def update(self, request, *args, **kwargs):
-        instance = Customer.objects.get_object_or_404(id=kwargs.get("pk"))
+        instance = get_object_or_404(Customer, id=kwargs.get("pk"))
 
         if instance.id != request.user.id and not request.user.is_superuser:
             raise PermissionDenied(detail="You can only update your own profile!")

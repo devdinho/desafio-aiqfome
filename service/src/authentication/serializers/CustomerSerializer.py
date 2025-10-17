@@ -44,14 +44,17 @@ class CustomerSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         newCustomer = Customer(
-            username=validated_data["username"],
-            first_name=validated_data["first_name"],
-            last_name=validated_data["last_name"],
-            email=validated_data["email"],
+            username=validated_data.get("username", None),
+            first_name=validated_data.get("first_name", None),
+            last_name=validated_data.get("last_name", None),
+            email=validated_data.get("email", None),
         )
 
-        newCustomer.set_password(validated_data["password"])
-        newCustomer.save()
+        newCustomer.set_password(validated_data.get("password", None))
+        try:
+            newCustomer.save()
+        except Exception as e:
+            raise serializers.ValidationError(str(e.__cause__))
 
         return newCustomer
 
