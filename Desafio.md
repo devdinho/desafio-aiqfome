@@ -88,7 +88,7 @@ Segurança básica (auth, validação)
 🖇️ Entrega
 
 -   Este desafio deve ser entregue em até 5 dias corridos a partir do recebimento deste documento.
--   Suba em um repositório público (GitHub, GitLab, Bitbucket) OU envie um ZIP para natalia.neto@aiqfome.com ou (44) 8812-0687
+-   Suba em um repositório público (GitHub, GitLab, Bitbucket) OU envie um ZIP para ######.####@aiqfome.com ou (##) ####-####
 -   Inclua instruções claras de como rodar o projeto.
 -   “Leia-me” é bem-vindo: explique suas escolhas.
 
