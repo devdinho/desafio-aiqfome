@@ -64,6 +64,8 @@ class FavoritesSerializer(serializers.ModelSerializer):
             product_id=product_id,
             defaults={"product_data": product_data, "active": True},
         )
+        if favorite and favorite.active and not create:
+            raise serializers.ValidationError("Produto já está nos favoritos.")
 
         if not create:
             favorite.active = True

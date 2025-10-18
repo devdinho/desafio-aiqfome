@@ -1,4 +1,5 @@
 from django.core.cache import cache
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status, viewsets
@@ -16,33 +17,18 @@ class FavoritesRestView(viewsets.ModelViewSet):
 
     Permite criar, listar, atualizar e desativar favoritos de produtos para o cliente autenticado.
 
-    ### Payload para criação/atualização:
+    ### Payload para criação:
     ```json
-        {
-            "product_data": {
-                "id": "string",
-                "name": "string",
-                "description": "string",
-                "price": "number",
-                ...
-            },
-            "active": true
-        }
+        { "product_id": 3 }
     ```
 
     ### Resposta:
     ```json
         {
-            "id": "integer",
+            "id": "uuid",
             "customer": "integer",
-            "product_id": "string",
-            "product_data": {
-                "id": "string",
-                "name": "string",
-                "description": "string",
-                "price": "number",
-                ...
-            },
+            "product_id": 3,
+            "product_data": { ... },
             "active": true,
             "created_at": "datetime",
             "updated_at": "datetime"
@@ -87,7 +73,7 @@ class FavoritesRestView(viewsets.ModelViewSet):
     )
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
-        update_favorites_cache_for_user(request.user.id)
+        transaction.on_commit(lambda: update_favorites_cache_for_user(request.user.id))
 
         return response
 
@@ -134,9 +120,6 @@ class FavoritesRestView(viewsets.ModelViewSet):
         instance.active = False
         instance.save()
 
-        update_favorites_cache_for_user(request.user.id)
+        transaction.on_commit(lambda: update_favorites_cache_for_user(request.user.id))
 
-        return Response(
-            {"detail": "Favorite deactivated successfully."},
-            status=status.HTTP_204_NO_CONTENT,
-        )
+        return Response(status=status.HTTP_204_NO_CONTENT)

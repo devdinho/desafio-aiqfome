@@ -47,7 +47,7 @@ class CustomerSerializer(serializers.ModelSerializer):
             username=validated_data.get("username", None),
             first_name=validated_data.get("first_name", None),
             last_name=validated_data.get("last_name", None),
-            email=validated_data.get("email", None),
+            email=validated_data.get("email", None).lower(),
         )
 
         newCustomer.set_password(validated_data.get("password", None))

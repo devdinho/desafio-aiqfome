@@ -48,7 +48,7 @@ class FakeStoreProxyViewSet(viewsets.ViewSet):
 
         if not data:
             response = requests.get(f"{FAKESTORE_BASE_URL}/{pk}")
-            if response.status_code == 404:
+            if not response.content:
                 raise NotFound(detail="Produto não encontrado.")
             elif response.status_code != 200:
                 return Response(

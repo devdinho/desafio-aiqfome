@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status, viewsets
@@ -90,7 +91,9 @@ class CustomerRestView(viewsets.ModelViewSet):
         if instance.id != request.user.id and not request.user.is_superuser:
             raise PermissionDenied(detail="You can only delete your own profile!")
 
-        update_favorites_cache_for_user(request.user.id, invalidate=True)
+        transaction.on_commit(
+            lambda: update_favorites_cache_for_user(request.user.id, invalidate=True)
+        )
 
         instance.delete()
 

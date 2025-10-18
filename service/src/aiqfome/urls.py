@@ -56,7 +56,7 @@ router = DefaultRouter(trailing_slash=False)
 router.register(
     "api/register/", CreateCustomerRestView, basename="CreateCustomerRestView"
 )
-router.register("api/customer", CustomerRestView, basename="CustomerRestView")
+router.register("api/customers", CustomerRestView, basename="CustomerRestView")
 router.register("api/favorites", FavoritesRestView, basename="FavoritesRestView")
 router.register("api/products", FakeStoreProxyViewSet, basename="FakeStoreProxyViewSet")
 

@@ -38,3 +38,6 @@ class Favorites(models.Model):
         verbose_name = "Produto Favorito"
         verbose_name_plural = "Produtos Favoritos"
         unique_together = ("customer", "product_id")
+        indexes = [
+            models.Index(fields=["customer", "active"], name="idx_customer_active")
+        ]
